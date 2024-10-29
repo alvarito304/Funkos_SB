@@ -30,6 +30,13 @@ public class FunkoRestController {
         return ResponseEntity.ok(dtos);
     }
 
+    @GetMapping("/name/{name}")
+    public ResponseEntity<List<FunkoDTO>> getFunkosByName(@PathVariable String name) {
+        List<Funko> funkos = service.getFunkosByName(name);
+        List<FunkoDTO> dtos;
+        dtos = funkos.stream().map(FunkoMapper::toDTO).toList();
+        return ResponseEntity.ok(dtos);
+    }
     @GetMapping("/{id}")
     public ResponseEntity<FunkoDTO> getFunkoById(@PathVariable Long id) {
         Funko funko = service.getFunkoById(id);
@@ -37,6 +44,12 @@ public class FunkoRestController {
         return ResponseEntity.ok(dto);
     }
 
+    /**
+     * Creates a new Funko.
+     *
+     * @param funko The Funko to create.
+     * @return The created Funko.
+     */
     @PostMapping
     public ResponseEntity<FunkoDTO> createFunko(@Valid @RequestBody FunkoDTO funko) {
         return ResponseEntity.ok(FunkoMapper.toDTO(service.createFunko(FunkoMapper.toEntity(funko))));

@@ -2,6 +2,8 @@ plugins {
     java
     id("org.springframework.boot") version "3.3.4"
     id("io.spring.dependency-management") version "1.1.6"
+    id("org.jetbrains.dokka") version "1.9.20"
+
 }
 
 group = "dev.alvaroherrero"
@@ -24,6 +26,9 @@ repositories {
 }
 
 dependencies {
+    // local database
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("com.h2database:h2") // base de datos a usar, puede ser otra
     // Database
     implementation("org.springframework.boot:spring-boot-starter-web")
     // Cache
