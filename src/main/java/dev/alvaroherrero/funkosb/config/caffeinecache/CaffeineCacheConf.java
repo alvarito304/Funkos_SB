@@ -21,7 +21,7 @@ public class CaffeineCacheConf {
                 .maximumSize(100)
                 .build());
 
-        cacheManager.registerCustomCache("OtherCache", Caffeine.newBuilder()
+        cacheManager.registerCustomCache("Category", Caffeine.newBuilder()
                 .expireAfterWrite(5, TimeUnit.MINUTES)
                 .maximumSize(200)
                 .build());

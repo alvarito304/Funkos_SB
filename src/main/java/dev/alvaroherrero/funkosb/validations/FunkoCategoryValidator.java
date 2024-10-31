@@ -1,6 +1,6 @@
 package dev.alvaroherrero.funkosb.validations;
 
-import dev.alvaroherrero.funkosb.model.funkocategory.FunkoCategory;
+import dev.alvaroherrero.funkosb.models.funkocategory.FunkoCategory;
 import dev.alvaroherrero.funkosb.validations.validanotations.ValidCategory;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

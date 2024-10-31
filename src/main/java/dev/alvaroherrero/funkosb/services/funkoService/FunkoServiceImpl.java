@@ -1,7 +1,7 @@
-package dev.alvaroherrero.funkosb.services;
+package dev.alvaroherrero.funkosb.services.funkoService;
 
 import dev.alvaroherrero.funkosb.exceptions.FunkoNotFoundException;
-import dev.alvaroherrero.funkosb.model.Funko;
+import dev.alvaroherrero.funkosb.models.Funko;
 import dev.alvaroherrero.funkosb.repositories.IFunkoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

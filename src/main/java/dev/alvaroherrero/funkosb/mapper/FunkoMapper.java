@@ -1,7 +1,7 @@
 package dev.alvaroherrero.funkosb.mapper;
 
 import dev.alvaroherrero.funkosb.dto.FunkoDTO;
-import dev.alvaroherrero.funkosb.model.Funko;
+import dev.alvaroherrero.funkosb.models.Funko;
 public class FunkoMapper {
     public static FunkoDTO toDTO(Funko funko) {
         FunkoDTO dto = new FunkoDTO();

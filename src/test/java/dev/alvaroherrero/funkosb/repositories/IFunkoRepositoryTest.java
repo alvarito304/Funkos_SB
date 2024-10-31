@@ -1,7 +1,7 @@
 package dev.alvaroherrero.funkosb.repositories;
 
-import dev.alvaroherrero.funkosb.model.Funko;
-import dev.alvaroherrero.funkosb.model.funkocategory.FunkoCategory;
+import dev.alvaroherrero.funkosb.models.Funko;
+import dev.alvaroherrero.funkosb.models.funkocategory.FunkoCategory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

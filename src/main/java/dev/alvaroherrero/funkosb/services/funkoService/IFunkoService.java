@@ -1,6 +1,6 @@
-package dev.alvaroherrero.funkosb.services;
+package dev.alvaroherrero.funkosb.services.funkoService;
 
-import dev.alvaroherrero.funkosb.model.Funko;
+import dev.alvaroherrero.funkosb.models.Funko;
 
 import java.util.List;
 

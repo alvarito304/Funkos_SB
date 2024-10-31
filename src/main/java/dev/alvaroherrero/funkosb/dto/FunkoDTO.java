@@ -1,13 +1,10 @@
 package dev.alvaroherrero.funkosb.dto;
 
-import dev.alvaroherrero.funkosb.model.funkocategory.FunkoCategory;
+import dev.alvaroherrero.funkosb.models.funkocategory.FunkoCategory;
 import dev.alvaroherrero.funkosb.validations.validanotations.ValidCategory;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-
-import java.time.LocalDateTime;
 
 @Data
 public class FunkoDTO {

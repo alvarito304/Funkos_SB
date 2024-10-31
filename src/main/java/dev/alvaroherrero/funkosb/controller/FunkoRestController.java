@@ -2,8 +2,8 @@ package dev.alvaroherrero.funkosb.controller;
 
 import dev.alvaroherrero.funkosb.dto.FunkoDTO;
 import dev.alvaroherrero.funkosb.mapper.FunkoMapper;
-import dev.alvaroherrero.funkosb.model.Funko;
-import dev.alvaroherrero.funkosb.services.IFunkoService;
+import dev.alvaroherrero.funkosb.models.Funko;
+import dev.alvaroherrero.funkosb.services.funkoService.IFunkoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

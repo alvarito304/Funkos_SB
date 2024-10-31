@@ -1,6 +1,6 @@
-package dev.alvaroherrero.funkosb.model;
+package dev.alvaroherrero.funkosb.models;
 
-import dev.alvaroherrero.funkosb.model.funkocategory.FunkoCategory;
+import dev.alvaroherrero.funkosb.models.funkocategory.FunkoCategory;
 import dev.alvaroherrero.funkosb.validations.validanotations.ValidCategory;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -11,7 +11,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Data
 @Builder
@@ -34,19 +33,15 @@ public class Funko {
     @Min(value = 1, message = "El precio debe ser mayor que 0")
     private float price;
 
-    @Column(nullable = false)
-    @ValidCategory
-    private FunkoCategory category;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     @CreatedDate
     private LocalDateTime created_at = LocalDateTime.now();
     @LastModifiedDate
     private LocalDateTime updated_at = LocalDateTime.now();
 
-    public Funko(String name, float price, FunkoCategory category) {
-        this.name = name;
-        this.price = price;
-        this.category = category;
-    }
+
 
 }
