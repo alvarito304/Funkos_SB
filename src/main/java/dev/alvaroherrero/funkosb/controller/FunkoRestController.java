@@ -56,7 +56,7 @@ public class FunkoRestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<FunkoDTO> updateFunko( @Valid @PathVariable Long id, @RequestBody Funko funko) {
+    public ResponseEntity<FunkoDTO> updateFunko(@Valid @PathVariable Long id, @RequestBody Funko funko) {
         return ResponseEntity.ok(FunkoMapper.toDTO(service.updateFunko(id, funko)));
     }
 

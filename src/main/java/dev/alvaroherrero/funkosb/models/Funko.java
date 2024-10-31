@@ -4,6 +4,7 @@ import dev.alvaroherrero.funkosb.models.funkocategory.FunkoCategory;
 import dev.alvaroherrero.funkosb.validations.validanotations.ValidCategory;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -33,9 +34,8 @@ public class Funko {
     @Min(value = 1, message = "El precio debe ser mayor que 0")
     private float price;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+   @ValidCategory
+    private FunkoCategory category;
 
     @CreatedDate
     private LocalDateTime created_at = LocalDateTime.now();
@@ -43,5 +43,9 @@ public class Funko {
     private LocalDateTime updated_at = LocalDateTime.now();
 
 
-
+    public Funko(String name, float price, FunkoCategory category ) {
+        this.category = category;
+        this.price = price;
+        this.name = name;
+    }
 }

@@ -1,5 +1,6 @@
 package dev.alvaroherrero.funkosb.dto;
 
+import dev.alvaroherrero.funkosb.models.Category;
 import dev.alvaroherrero.funkosb.models.funkocategory.FunkoCategory;
 import dev.alvaroherrero.funkosb.validations.validanotations.ValidCategory;
 import jakarta.validation.constraints.Min;

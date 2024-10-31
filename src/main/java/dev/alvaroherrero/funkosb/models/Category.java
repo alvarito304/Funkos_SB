@@ -36,8 +36,8 @@ public class Category {
     @LastModifiedDate
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "category")
-    private List<Funko> funkos;
+//    @OneToMany(mappedBy = "category")
+//    private List<Funko> funkos;
 
     private Boolean softDelete = false;
 }

@@ -60,11 +60,12 @@ public class FunkoServiceImpl implements  IFunkoService {
         var res = funkoRepository.findById(id).orElseThrow(
                 () -> new FunkoNotFoundException(id)
         );
-        if (funko.getName()!= null) res.setName(funko.getName());
-        if (funko.getPrice()!= 0) res.setPrice(funko.getPrice());
-        if (funko.getCategory()!= null) res.setCategory(funko.getCategory());
-        res.setUpdated_at(LocalDateTime.now());
-        return funkoRepository.save(res);
+        funko.setId(res.getId());
+        if (funko.getName() == null) funko.setName(res.getName());
+        if (funko.getPrice() == 0) funko.setPrice(res.getPrice());
+        if (funko.getCategory() == null) funko.setCategory(res.getCategory());
+        funko.setUpdated_at(LocalDateTime.now());
+        return funkoRepository.save(funko);
     }
 
     @Override

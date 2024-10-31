@@ -11,12 +11,10 @@ public class FunkoCategoryValidator implements ConstraintValidator<ValidCategory
         if (value == null) {
             return false;
         }
-        return value == FunkoCategory.ACTION ||
-                value == FunkoCategory.COMEDY ||
-                value == FunkoCategory.DRAMA ||
-                value == FunkoCategory.FANTASY ||
-                value == FunkoCategory.HORROR ||
-                value == FunkoCategory.MYSTERY ||
-                value == FunkoCategory.THRILLER;
+        return value == FunkoCategory.DISNEY ||
+                value == FunkoCategory.SERIE ||
+                value == FunkoCategory.PELICULA ||
+                value == FunkoCategory.SUPERHEROES ||
+                value == FunkoCategory.OTROS;
     }
 }
