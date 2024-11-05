@@ -1,4 +1,4 @@
-package dev.alvaroherrero.funkosb.storage.exceptions;
+package dev.alvaroherrero.funkosb.funko.storage.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

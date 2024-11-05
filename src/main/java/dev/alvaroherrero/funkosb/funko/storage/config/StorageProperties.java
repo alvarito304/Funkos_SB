@@ -1,11 +1,10 @@
-package dev.alvaroherrero.funkosb.storage.config;
+package dev.alvaroherrero.funkosb.funko.storage.config;
 
 
-import dev.alvaroherrero.funkosb.storage.service.IStorageService;
+import dev.alvaroherrero.funkosb.funko.storage.service.IStorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

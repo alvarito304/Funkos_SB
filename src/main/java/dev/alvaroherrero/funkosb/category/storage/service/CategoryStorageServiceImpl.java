@@ -1,17 +1,12 @@
-package dev.alvaroherrero.funkosb.storage.service;
+package dev.alvaroherrero.funkosb.category.storage.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.stream.Stream;
-
-import dev.alvaroherrero.funkosb.storage.controller.FileUploadController;
-import dev.alvaroherrero.funkosb.storage.exceptions.StorageException;
-import dev.alvaroherrero.funkosb.storage.exceptions.StorageFileNotFoundException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.alvaroherrero.funkosb.category.model.Category;
+import dev.alvaroherrero.funkosb.category.service.ICategoryService;
+import dev.alvaroherrero.funkosb.category.storage.controller.CategoryFileUploadController;
+import dev.alvaroherrero.funkosb.category.storage.exceptions.StorageException;
+import dev.alvaroherrero.funkosb.category.storage.exceptions.StorageFileNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,15 +18,28 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.List;
+import java.util.stream.Stream;
+
 @Service
 @Slf4j
-public class StorageServiceImpl implements IStorageService {
+public class CategoryStorageServiceImpl implements ICategoryStorageService {
 
     // Directorio raiz de nuestro almacén de ficheros
     private final Path rootLocation;
+    private final ICategoryService categoryService;
 
-
-    public StorageServiceImpl(@Value("${upload.root-location}") String path) {
+    @Autowired
+    public CategoryStorageServiceImpl(@Value("${upload-jsons.root-location}") String path, ICategoryService categoryService) {
+        this.categoryService = categoryService;
         this.rootLocation = Paths.get(path);
     }
 
@@ -67,6 +75,9 @@ public class StorageServiceImpl implements IStorageService {
                 throw new StorageFileNotFoundException(
                         "No se puede almacenar un fichero con una ruta relativa fuera del directorio actual "
                                 + filename);
+            }
+            if (!extension.equals("json")) {
+                throw new StorageFileNotFoundException("El fichero debe ser un JSON " + filename);
             }
 
             try (InputStream inputStream = file.getInputStream()) {
@@ -169,6 +180,32 @@ public class StorageServiceImpl implements IStorageService {
 
     }
 
+    @Override
+    public List<Category> readJson(MultipartFile filename) {
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            // Convierte el JSON del archivo a una lista de objetos Category
+            var categorias =  mapper.readValue(
+                    filename.getInputStream(),
+                    new TypeReference<List<Category>>() {}
+            );
+            for (var category : categorias) {
+                // Valida y maneja los datos de las categorías
+                // Por ejemplo, comprueba que el nombre no está vacío
+                if (!StringUtils.isEmpty(category.getCategory())) {
+                   categoryService.createCategory(category);
+                }
+            }
+            return categorias;
+        } catch (IOException e) {
+            // Maneja la excepción (por ejemplo, imprime el error o lanza una excepción personalizada)
+            e.printStackTrace();
+            //cambiar excepcion
+            throw new StorageFileNotFoundException("Error al leer el JSON " + e); // o lanza una excepción personalizada
+        }
+    }
+
     /**
      * Método que devuelve la URL de un fichero a partir de su nombre
      * Devuelve un objeto de tipo String
@@ -179,7 +216,7 @@ public class StorageServiceImpl implements IStorageService {
         return MvcUriComponentsBuilder
                 // El segundo argumento es necesario solo cuando queremos obtener la imagen
                 // En este caso tan solo necesitamos obtener la URL
-                .fromMethodName(FileUploadController.class, "serveFile", filename, null)
+                .fromMethodName(CategoryFileUploadController.class, "serveFile", filename, null)
                 .build().toUriString();
     }
 

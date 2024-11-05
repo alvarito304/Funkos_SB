@@ -5,7 +5,7 @@ import dev.alvaroherrero.funkosb.funko.exceptions.FunkoNotFoundException;
 import dev.alvaroherrero.funkosb.funko.mapper.FunkoMapper;
 import dev.alvaroherrero.funkosb.funko.model.Funko;
 import dev.alvaroherrero.funkosb.funko.repository.IFunkoRepository;
-import dev.alvaroherrero.funkosb.storage.service.IStorageService;
+import dev.alvaroherrero.funkosb.funko.storage.service.IStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
