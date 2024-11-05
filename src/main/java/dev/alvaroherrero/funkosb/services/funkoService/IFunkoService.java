@@ -3,6 +3,7 @@ package dev.alvaroherrero.funkosb.services.funkoService;
 import dev.alvaroherrero.funkosb.models.Category;
 import dev.alvaroherrero.funkosb.models.Funko;
 import dev.alvaroherrero.funkosb.models.funkocategory.FunkoCategory;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -14,4 +15,5 @@ public interface IFunkoService {
     public Funko createFunko(Funko funko);
     public Funko updateFunko(Long id, Funko funko);
     public Funko deleteFunko(Long id);
+    public Funko updateImage(Long id, MultipartFile image);
 }

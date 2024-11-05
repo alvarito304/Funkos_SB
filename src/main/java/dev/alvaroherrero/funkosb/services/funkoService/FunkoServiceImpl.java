@@ -7,6 +7,7 @@ import dev.alvaroherrero.funkosb.models.Funko;
 import dev.alvaroherrero.funkosb.models.funkocategory.FunkoCategory;
 import dev.alvaroherrero.funkosb.repositories.ICategoryRepository;
 import dev.alvaroherrero.funkosb.repositories.IFunkoRepository;
+import dev.alvaroherrero.funkosb.storage.service.IStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,10 +25,12 @@ import java.util.List;
 public class FunkoServiceImpl implements  IFunkoService {
     private final Logger logger = LoggerFactory.getLogger(FunkoServiceImpl.class);
     private IFunkoRepository funkoRepository;
+    private IStorageService storageService;
 
     @Autowired
-    public FunkoServiceImpl(IFunkoRepository funkoRepository) {
+    public FunkoServiceImpl(IFunkoRepository funkoRepository, IStorageService storageService) {
         this.funkoRepository = funkoRepository;
+        this.storageService = storageService;
     }
 
     @Override
@@ -88,5 +92,17 @@ public class FunkoServiceImpl implements  IFunkoService {
         );
         funkoRepository.delete(res);
         return res;
+    }
+
+    @Override
+    public Funko updateImage(Long id, MultipartFile image) {
+        logger.info("Actualizando imagen de funko con ID " + id);
+        var res = funkoRepository.findById(id).orElseThrow(
+                () -> new FunkoNotFoundException(id)
+        );
+        var storedImage = storageService.store(image);
+        res.setImage(storedImage);
+        funkoRepository.save(res);
+        return null;
     }
 }

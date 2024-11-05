@@ -42,6 +42,8 @@ public class Funko {
 
    private Boolean funkoSoftDeleted = false;
 
+   private String image;
+
     @CreatedDate
     private LocalDateTime created_at = LocalDateTime.now();
     @LastModifiedDate

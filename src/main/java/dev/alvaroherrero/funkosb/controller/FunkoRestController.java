@@ -5,14 +5,20 @@ import dev.alvaroherrero.funkosb.mapper.FunkoMapper;
 import dev.alvaroherrero.funkosb.models.Funko;
 import dev.alvaroherrero.funkosb.services.funkoService.IFunkoService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/funkos")
+@Slf4j
 public class FunkoRestController {
 
     private IFunkoService service;
@@ -63,6 +69,23 @@ public class FunkoRestController {
     @DeleteMapping("/{id}")
     public ResponseEntity<FunkoDTO> deleteFunko(@PathVariable Long id) {
         return ResponseEntity.ok(FunkoMapper.toDTO(service.deleteFunko(id)));
+    }
+
+    @PatchMapping(value = "/imagen/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Funko> nuevoProducto(
+            @PathVariable Long id,
+            @RequestPart("file") MultipartFile file) {
+
+        log.info("Actualizando imagen de producto por id: " + id);
+
+        // Buscamos la raqueta
+        if (!file.isEmpty()) {
+            // Actualizamos el producto
+            return ResponseEntity.ok(service.updateImage(id, file));
+
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se ha enviado una imagen para el producto o esta está vacía");
+        }
     }
 }
 
