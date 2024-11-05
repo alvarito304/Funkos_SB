@@ -1,6 +1,6 @@
 //package dev.alvaroherrero.funkosb.repositories;
 //
-//import dev.alvaroherrero.funkosb.models.Funko;
+//import dev.alvaroherrero.funkosb.funko.model.Funko;
 //import dev.alvaroherrero.funkosb.models.funkocategory.FunkoCategory;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;

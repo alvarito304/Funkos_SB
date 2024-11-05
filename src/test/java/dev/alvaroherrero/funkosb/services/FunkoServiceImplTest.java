@@ -1,9 +1,9 @@
 //package dev.alvaroherrero.funkosb.services;
 //
-//import dev.alvaroherrero.funkosb.exceptions.FunkoNotFoundException;
-//import dev.alvaroherrero.funkosb.models.Funko;
+//import dev.alvaroherrero.funkosb.funko.exceptions.FunkoNotFoundException;
+//import dev.alvaroherrero.funkosb.funko.model.Funko;
 //import dev.alvaroherrero.funkosb.models.funkocategory.FunkoCategory;
-//import dev.alvaroherrero.funkosb.repositories.IFunkoRepository;
+//import dev.alvaroherrero.funkosb.funko.repository.IFunkoRepository;
 //import dev.alvaroherrero.funkosb.services.funkoService.FunkoServiceImpl;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
