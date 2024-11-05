@@ -3,6 +3,7 @@ package dev.alvaroherrero.funkosb.services.categoryService;
 import dev.alvaroherrero.funkosb.exceptions.CategoryNotFoundException;
 import dev.alvaroherrero.funkosb.models.Category;
 import dev.alvaroherrero.funkosb.repositories.ICategoryRepository;
+import dev.alvaroherrero.funkosb.services.funkoService.IFunkoService;
 import org.hibernate.annotations.Cache;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
@@ -22,10 +23,12 @@ import java.util.UUID;
 public class CategoryServiceImpl implements ICategoryService{
     private static final Logger logger = LoggerFactory.getLogger(CategoryServiceImpl.class);
     private ICategoryRepository categoryRepository;
+    private IFunkoService funkoService;
 
     @Autowired
-    public CategoryServiceImpl(ICategoryRepository categoryRepository) {
+    public CategoryServiceImpl(ICategoryRepository categoryRepository, IFunkoService funkoService) {
         this.categoryRepository = categoryRepository;
+        this.funkoService = funkoService;
     }
 
     @Override
@@ -47,6 +50,25 @@ public class CategoryServiceImpl implements ICategoryService{
     @CachePut(key = "#result.id")
     public Category createCategory(Category category) {
         logger.info("Creando nueva categoría");
+        // revisar si la categoría ya existe y si es asi la actualizamos para que vuelva a ser activa
+        var softDeletedCategory = categoryRepository.findSoftDeletedCategory(category.getCategory());
+        if ( softDeletedCategory != null) {
+            logger.info("La categoría {} ya existe, se actualizó su estado a activo.", category.getCategory());
+            softDeletedCategory.setSoftDelete(false);
+            softDeletedCategory.setUpdatedAt(LocalDateTime.now());
+            categoryRepository.save(softDeletedCategory);
+            // hacemos q sus funkos sean visibles
+            for (var funko : softDeletedCategory.getFunkos()) {
+                funko.setFunkoSoftDeleted(false);
+                funkoService.updateFunko(funko.getId(), funko);
+            }
+            return softDeletedCategory;
+        }
+        softDeletedCategory = categoryRepository.findActiveCategory(category.getCategory());
+        if (softDeletedCategory != null) {
+            logger.info("La categoría ya existe y su id es {}", category.getId());
+            return softDeletedCategory;
+        }
         return categoryRepository.save(category);
     }
 
@@ -79,10 +101,19 @@ public class CategoryServiceImpl implements ICategoryService{
     @CacheEvict(key = "#id")
     public Category softDeleteCategory(UUID id) {
         logger.info("Soft eliminando categoría con ID " + id);
+        // Buscamos la categoria
         var res = categoryRepository.findById(id).orElseThrow(
                 () -> new CategoryNotFoundException(id)
         );
-        categoryRepository.softDelete(res.getId());
+        // Marcamos la categoria como borrada
+        res.setSoftDelete(true);
+        // Guardamos la categoria en la base de datos
+        categoryRepository.save(res);
+        // Buscamos todos los funkos de la categoria y les marcamos como borrados
+        for (var funko: res.getFunkos()) {
+            funko.setFunkoSoftDeleted(true);
+            funkoService.updateFunko(funko.getId(), funko);
+        }
         return res;
     }
 }

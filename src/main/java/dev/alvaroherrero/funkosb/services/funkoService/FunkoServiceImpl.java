@@ -1,7 +1,11 @@
 package dev.alvaroherrero.funkosb.services.funkoService;
 
+import dev.alvaroherrero.funkosb.exceptions.CategoryNotFoundException;
 import dev.alvaroherrero.funkosb.exceptions.FunkoNotFoundException;
+import dev.alvaroherrero.funkosb.models.Category;
 import dev.alvaroherrero.funkosb.models.Funko;
+import dev.alvaroherrero.funkosb.models.funkocategory.FunkoCategory;
+import dev.alvaroherrero.funkosb.repositories.ICategoryRepository;
 import dev.alvaroherrero.funkosb.repositories.IFunkoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +32,7 @@ public class FunkoServiceImpl implements  IFunkoService {
     @Override
     public List<Funko> getFunkos() {
         logger.info("Obteniendo todos los funkos");
-        return funkoRepository.findAll();
+        return funkoRepository.findAllActiveFunkos();
     }
 
     @Override
@@ -46,10 +50,17 @@ public class FunkoServiceImpl implements  IFunkoService {
         );
     }
 
+
+
     @Override
     @CachePut(key = "#result.id")
     public Funko createFunko(Funko funko) {
         logger.info("Creado nuevo funko: " + funko);
+//        var category = categoryRepository.findActiveCategory(funko.getCategory().getCategory());
+//        if (category == null) {
+//            throw new CategoryNotFoundException(funko.getCategory().getId());
+//        }
+//        funko.setCategory(category);
         return funkoRepository.save(funko);
     }
 

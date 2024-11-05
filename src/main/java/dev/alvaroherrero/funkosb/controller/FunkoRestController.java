@@ -51,7 +51,7 @@ public class FunkoRestController {
      * @return The created Funko.
      */
     @PostMapping
-    public ResponseEntity<FunkoDTO> createFunko(@Valid @RequestBody FunkoDTO funko) {
+    public ResponseEntity<FunkoDTO> createFunko( @RequestBody FunkoDTO funko) {
         return ResponseEntity.ok(FunkoMapper.toDTO(service.createFunko(FunkoMapper.toEntity(funko))));
     }
 

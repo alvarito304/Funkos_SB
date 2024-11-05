@@ -1,5 +1,6 @@
 package dev.alvaroherrero.funkosb.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import dev.alvaroherrero.funkosb.models.funkocategory.FunkoCategory;
 import dev.alvaroherrero.funkosb.validations.validanotations.ValidCategory;
 import jakarta.persistence.*;
@@ -34,8 +35,12 @@ public class Funko {
     @Min(value = 1, message = "El precio debe ser mayor que 0")
     private float price;
 
-   @ValidCategory
-    private FunkoCategory category;
+   @ManyToOne
+   @JoinColumn(name = "category_id", nullable = false)
+   @JsonBackReference
+    private Category category;
+
+   private Boolean funkoSoftDeleted = false;
 
     @CreatedDate
     private LocalDateTime created_at = LocalDateTime.now();
@@ -43,7 +48,7 @@ public class Funko {
     private LocalDateTime updated_at = LocalDateTime.now();
 
 
-    public Funko(String name, float price, FunkoCategory category ) {
+    public Funko(String name, float price, Category category ) {
         this.category = category;
         this.price = price;
         this.name = name;

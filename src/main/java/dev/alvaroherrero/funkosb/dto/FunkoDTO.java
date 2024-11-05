@@ -13,6 +13,6 @@ public class FunkoDTO {
     private String name;
     @Min(value = 0, message = "El precio debe ser un mayor que 0")
     private float price;
-    @ValidCategory()
-    private FunkoCategory category;
+
+    private Category category;
 }

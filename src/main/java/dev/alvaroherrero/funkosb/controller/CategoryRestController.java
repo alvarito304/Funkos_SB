@@ -4,7 +4,9 @@ import dev.alvaroherrero.funkosb.models.Category;
 import dev.alvaroherrero.funkosb.services.categoryService.ICategoryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,9 +47,10 @@ public class CategoryRestController {
         return ResponseEntity.ok(updatedCategory);
     }
 
+    @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<Category> deleteCategory( @PathVariable UUID id) {
-        var softDeletedCategory = categoryService.softDeleteCategory(id);
-        return ResponseEntity.ok(softDeletedCategory);
+        categoryService.softDeleteCategory(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

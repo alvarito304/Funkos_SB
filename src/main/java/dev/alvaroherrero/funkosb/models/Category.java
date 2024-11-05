@@ -1,5 +1,6 @@
 package dev.alvaroherrero.funkosb.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dev.alvaroherrero.funkosb.models.funkocategory.FunkoCategory;
 import dev.alvaroherrero.funkosb.validations.validanotations.ValidCategory;
 import jakarta.persistence.*;
@@ -36,8 +37,9 @@ public class Category {
     @LastModifiedDate
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-//    @OneToMany(mappedBy = "category")
-//    private List<Funko> funkos;
+    @OneToMany(mappedBy = "category", orphanRemoval = true)
+    @JsonManagedReference
+    private List<Funko> funkos;
 
     private Boolean softDelete = false;
 }
