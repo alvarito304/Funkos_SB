@@ -103,6 +103,6 @@ public class FunkoServiceImpl implements  IFunkoService {
         var storedImage = storageService.store(image);
         res.setImage(storedImage);
         funkoRepository.save(res);
-        return null;
+        return res;
     }
 }
