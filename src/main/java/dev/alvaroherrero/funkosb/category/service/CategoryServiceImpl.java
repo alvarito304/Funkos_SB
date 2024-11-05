@@ -3,7 +3,7 @@ package dev.alvaroherrero.funkosb.category.service;
 import dev.alvaroherrero.funkosb.category.exceptions.CategoryNotFoundException;
 import dev.alvaroherrero.funkosb.category.model.Category;
 import dev.alvaroherrero.funkosb.category.repository.ICategoryRepository;
-import dev.alvaroherrero.funkosb.funko.service.funkoService.IFunkoService;
+import dev.alvaroherrero.funkosb.funko.service.IFunkoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,7 +3,7 @@ package dev.alvaroherrero.funkosb.funko.controller;
 import dev.alvaroherrero.funkosb.funko.dto.FunkoDTO;
 import dev.alvaroherrero.funkosb.funko.mapper.FunkoMapper;
 import dev.alvaroherrero.funkosb.funko.model.Funko;
-import dev.alvaroherrero.funkosb.funko.service.funkoService.IFunkoService;
+import dev.alvaroherrero.funkosb.funko.service.IFunkoService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,24 +30,16 @@ public class FunkoRestController {
 
     @GetMapping
     public ResponseEntity<List<FunkoDTO>> getAllFunkos() {
-        List<Funko> funkos = service.getFunkos();
-        List<FunkoDTO> dtos;
-        dtos = funkos.stream().map(FunkoMapper::toDTO).toList();
-        return ResponseEntity.ok(dtos);
+        return ResponseEntity.ok(service.getFunkos());
     }
 
     @GetMapping("/name/{name}")
     public ResponseEntity<List<FunkoDTO>> getFunkosByName(@PathVariable String name) {
-        List<Funko> funkos = service.getFunkosByName(name);
-        List<FunkoDTO> dtos;
-        dtos = funkos.stream().map(FunkoMapper::toDTO).toList();
-        return ResponseEntity.ok(dtos);
+        return ResponseEntity.ok(service.getFunkosByName(name));
     }
     @GetMapping("/{id}")
     public ResponseEntity<FunkoDTO> getFunkoById(@PathVariable Long id) {
-        Funko funko = service.getFunkoById(id);
-        FunkoDTO dto = FunkoMapper.toDTO(funko);
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(service.getFunkoById(id));
     }
 
     /**
@@ -57,22 +49,22 @@ public class FunkoRestController {
      * @return The created Funko.
      */
     @PostMapping
-    public ResponseEntity<FunkoDTO> createFunko( @RequestBody FunkoDTO funko) {
-        return ResponseEntity.ok(FunkoMapper.toDTO(service.createFunko(FunkoMapper.toEntity(funko))));
+    public ResponseEntity<FunkoDTO> createFunko( @RequestBody Funko funko) {
+        return ResponseEntity.ok(service.createFunko(funko));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<FunkoDTO> updateFunko(@Valid @PathVariable Long id, @RequestBody Funko funko) {
-        return ResponseEntity.ok(FunkoMapper.toDTO(service.updateFunko(id, funko)));
+        return ResponseEntity.ok(service.updateFunko(id, funko));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<FunkoDTO> deleteFunko(@PathVariable Long id) {
-        return ResponseEntity.ok(FunkoMapper.toDTO(service.deleteFunko(id)));
+        return ResponseEntity.ok(service.deleteFunko(id));
     }
 
     @PatchMapping(value = "/imagen/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Funko> nuevoProducto(
+    public ResponseEntity<FunkoDTO> nuevoProducto(
             @PathVariable Long id,
             @RequestPart("file") MultipartFile file) {
 
