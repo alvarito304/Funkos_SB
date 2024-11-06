@@ -1,11 +1,13 @@
 package dev.alvaroherrero.funkosb.category.storage.controller;
 
+import dev.alvaroherrero.funkosb.category.dto.CategoryDTO;
 import dev.alvaroherrero.funkosb.category.model.Category;
 import dev.alvaroherrero.funkosb.category.storage.service.ICategoryStorageService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +53,7 @@ public class CategoryFileUploadController {
     }
 
     @PutMapping( consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public List<Category> uploadFile(@RequestPart("file") MultipartFile file) {
+    public List<CategoryDTO> uploadFile(@RequestPart("file") MultipartFile file) {
 
         log.info("Uploading file");
         storageService.store(file);
@@ -63,4 +65,19 @@ public class CategoryFileUploadController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se ha enviado un json para las categorias o esta está vacía");
         }
     }
+
+    @GetMapping
+    @ResponseBody
+    public ResponseEntity<Resource> serveDefaultFile() {
+        // Supongamos que el JSON predeterminado se guarda como "default.json" en tu almacenamiento
+        String defaultFilename = "default.json";
+        storageService.createDefaultJson();
+        Resource file = storageService.loadAsResource(defaultFilename);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"categories.json\"") // Forzar descarga con nombre 'categories.json'
+                .body(file);
+    }
+
 }

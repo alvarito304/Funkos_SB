@@ -1,5 +1,6 @@
 package dev.alvaroherrero.funkosb.category.storage.service;
 
+import dev.alvaroherrero.funkosb.category.dto.CategoryDTO;
 import dev.alvaroherrero.funkosb.category.model.Category;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,7 +22,9 @@ public interface ICategoryStorageService {
 
     void delete(String filename);
 
-    List<Category> readJson(MultipartFile file);
+    List<CategoryDTO> readJson(MultipartFile file);
+
+    void  createDefaultJson();
 
     void deleteAll();
 

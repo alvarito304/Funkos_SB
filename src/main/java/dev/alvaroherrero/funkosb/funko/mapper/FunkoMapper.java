@@ -15,6 +15,6 @@ public class FunkoMapper {
     }
 
     public Funko toEntity(FunkoDTO dto) {
-        return new Funko(dto.getName(), dto.getPrice(), dto.getCategory());
+        return new Funko( dto.getName(), dto.getPrice(), dto.getCategory());
     }
 }

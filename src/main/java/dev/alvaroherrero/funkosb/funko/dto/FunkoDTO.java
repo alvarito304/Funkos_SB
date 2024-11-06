@@ -7,6 +7,7 @@ import lombok.Data;
 
 @Data
 public class FunkoDTO {
+
     @NotBlank(message = "El nombre no puede estar vacío")
     private String name;
     @Min(value = 0, message = "El precio debe ser un mayor que 0")

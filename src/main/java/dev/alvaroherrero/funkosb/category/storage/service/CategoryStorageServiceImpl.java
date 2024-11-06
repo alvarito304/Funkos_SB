@@ -2,6 +2,8 @@ package dev.alvaroherrero.funkosb.category.storage.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.alvaroherrero.funkosb.category.dto.CategoryDTO;
+import dev.alvaroherrero.funkosb.category.mapper.CategoryMapper;
 import dev.alvaroherrero.funkosb.category.model.Category;
 import dev.alvaroherrero.funkosb.category.service.ICategoryService;
 import dev.alvaroherrero.funkosb.category.storage.controller.CategoryFileUploadController;
@@ -36,9 +38,11 @@ public class CategoryStorageServiceImpl implements ICategoryStorageService {
     // Directorio raiz de nuestro almacén de ficheros
     private final Path rootLocation;
     private final ICategoryService categoryService;
+    private final CategoryMapper categoryMapper;
 
     @Autowired
-    public CategoryStorageServiceImpl(@Value("${upload-jsons.root-location}") String path, ICategoryService categoryService) {
+    public CategoryStorageServiceImpl(@Value("${upload-jsons.root-location}") String path, ICategoryService categoryService, CategoryMapper categoryMapper) {
+        this.categoryMapper = categoryMapper;
         this.categoryService = categoryService;
         this.rootLocation = Paths.get(path);
     }
@@ -181,7 +185,7 @@ public class CategoryStorageServiceImpl implements ICategoryStorageService {
     }
 
     @Override
-    public List<Category> readJson(MultipartFile filename) {
+    public List<CategoryDTO> readJson(MultipartFile filename) {
         ObjectMapper mapper = new ObjectMapper();
 
         try {
@@ -197,12 +201,33 @@ public class CategoryStorageServiceImpl implements ICategoryStorageService {
                    categoryService.createCategory(category);
                 }
             }
-            return categorias;
+            return categorias.stream().map(categoryMapper::toDTO).toList();
         } catch (IOException e) {
             // Maneja la excepción (por ejemplo, imprime el error o lanza una excepción personalizada)
             e.printStackTrace();
             //cambiar excepcion
             throw new StorageFileNotFoundException("Error al leer el JSON " + e); // o lanza una excepción personalizada
+        }
+    }
+
+    @Override
+    public void createDefaultJson() {
+        ObjectMapper mapper = new ObjectMapper();
+        String filename = "default.json";
+        Path filePath = rootLocation.resolve(filename);
+
+        var categories = categoryService.getAllCategories();
+
+        var categoriesDTO = categories.stream().map(categoryMapper::toDTO).toList();
+
+
+        try {
+            // Serializar las categorías a JSON y guardarlas en el archivo
+            mapper.writeValue(filePath.toFile(), categoriesDTO);
+            log.info("Archivo default.json creado en " + filePath.toString());
+        } catch (IOException e) {
+            log.error("Error al crear default.json: " + e.getMessage());
+            throw new StorageException("No se pudo crear el archivo default.json", e);
         }
     }
 
@@ -219,5 +244,7 @@ public class CategoryStorageServiceImpl implements ICategoryStorageService {
                 .fromMethodName(CategoryFileUploadController.class, "serveFile", filename, null)
                 .build().toUriString();
     }
+
+
 
 }

@@ -22,45 +22,56 @@ import java.util.List;
 public class FunkoRestController {
 
     private IFunkoService service;
+    private FunkoMapper funkoMapper;
 
     @Autowired
-    public FunkoRestController(IFunkoService funkoService) {
+    public FunkoRestController(IFunkoService funkoService, FunkoMapper funkoMapper) {
+        this.funkoMapper = funkoMapper;
         this.service = funkoService;
     }
 
     @GetMapping
     public ResponseEntity<List<FunkoDTO>> getAllFunkos() {
-        return ResponseEntity.ok(service.getFunkos());
+        var funkos = service.getFunkos();
+        var funkosDTOs = funkos.stream().map(funkoMapper::toDTO).toList();
+        return ResponseEntity.ok(funkosDTOs);
     }
 
     @GetMapping("/name/{name}")
     public ResponseEntity<List<FunkoDTO>> getFunkosByName(@PathVariable String name) {
-        return ResponseEntity.ok(service.getFunkosByName(name));
+        var funkos = service.getFunkosByName(name);
+        var funkosDTOs = funkos.stream().map(funkoMapper::toDTO).toList();
+        return ResponseEntity.ok(funkosDTOs);
     }
     @GetMapping("/{id}")
     public ResponseEntity<FunkoDTO> getFunkoById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getFunkoById(id));
+        return ResponseEntity.ok(funkoMapper.toDTO(service.getFunkoById(id)));
     }
 
     /**
      * Creates a new Funko.
      *
-     * @param funko The Funko to create.
+     * @param funkoDTO The Funko to create.
      * @return The created Funko.
      */
     @PostMapping
-    public ResponseEntity<FunkoDTO> createFunko( @RequestBody Funko funko) {
-        return ResponseEntity.ok(service.createFunko(funko));
+    public ResponseEntity<FunkoDTO> createFunko(@Valid @RequestBody FunkoDTO funkoDTO) {
+        // Convertir el DTO a entidad y llamar al servicio
+        Funko funko = funkoMapper.toEntity(funkoDTO);
+        Funko savedFunko = service.createFunko(funko);
+
+        // Convertir la entidad guardada de vuelta a DTO para retornarla
+        return ResponseEntity.ok(funkoMapper.toDTO(savedFunko));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<FunkoDTO> updateFunko(@Valid @PathVariable Long id, @RequestBody Funko funko) {
-        return ResponseEntity.ok(service.updateFunko(id, funko));
+        return ResponseEntity.ok(funkoMapper.toDTO(service.updateFunko(id, funko)));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<FunkoDTO> deleteFunko(@PathVariable Long id) {
-        return ResponseEntity.ok(service.deleteFunko(id));
+        return ResponseEntity.ok(funkoMapper.toDTO(service.deleteFunko(id)));
     }
 
     @PatchMapping(value = "/imagen/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -73,7 +84,7 @@ public class FunkoRestController {
         // Buscamos la raqueta
         if (!file.isEmpty()) {
             // Actualizamos el producto
-            return ResponseEntity.ok(service.updateImage(id, file));
+            return ResponseEntity.ok(funkoMapper.toDTO(service.updateImage(id, file)));
 
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se ha enviado una imagen para el producto o esta está vacía");
