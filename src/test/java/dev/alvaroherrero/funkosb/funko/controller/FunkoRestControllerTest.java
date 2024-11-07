@@ -25,10 +25,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -162,6 +164,29 @@ class FunkoRestControllerTest {
         );
 
         verify(funkoService, times(1)).createFunko(any());
+    }
+
+    @Test
+    void createFunkoInvalid() throws Exception {
+        funkoTest.setName(null);
+        funkoTest.setPrice(-1.0f);
+        funkoTest.setCategory(null);
+        when(funkoService.createFunko(funkoTest)).thenReturn(funkoTest);
+
+        MockHttpServletResponse response = mockMvc.perform(
+                        post(myEndpoint)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(jsonFunko.write(funkoTest).getJson()))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse();
+
+
+        assertAll(
+                () -> assertTrue(response.getContentAsString().contains("El nombre no puede estar vacio")),
+                () -> assertTrue(response.getContentAsString().contains("El precio debe ser un mayor que 0"))
+        );
+        verify(funkoService, never()).createFunko(any());
+
     }
 
     @Test

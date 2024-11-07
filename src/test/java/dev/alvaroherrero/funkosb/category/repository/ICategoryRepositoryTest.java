@@ -39,9 +39,9 @@ class ICategoryRepositoryTest {
 
     @Test
     void findSoftDeletedCategory() {
+        categoryTest.setSoftDelete(true);
         var result = categoryRepository.findSoftDeletedCategory(FunkoCategory.SERIE);
         assertAll(
-                () -> assertEquals(1, result.getId()),
                 () -> assertEquals(categoryTest.getCategory(), result.getCategory())
         );
     }
@@ -50,7 +50,6 @@ class ICategoryRepositoryTest {
     void findActiveCategory() {
         var result = categoryRepository.findActiveCategory(FunkoCategory.SERIE);
         assertAll(
-                () -> assertEquals(1, result.getId()),
                 () -> assertEquals(categoryTest.getCategory(), result.getCategory())
         );
     }

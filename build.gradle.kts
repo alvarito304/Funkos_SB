@@ -3,7 +3,7 @@ plugins {
     id("org.springframework.boot") version "3.3.4"
     id("io.spring.dependency-management") version "1.1.6"
     id("org.jetbrains.dokka") version "1.9.20"
-
+    id ("jacoco")
 }
 
 group = "dev.alvaroherrero"
@@ -43,6 +43,24 @@ dependencies {
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+tasks.test {
+    useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(false)
+        csv.required.set(false)
+        html.outputLocation.set(file("build/jacoco"))
+    }
+}
+
+tasks.check {
+    dependsOn(tasks.jacocoTestReport)
 }
 
 tasks.withType<Test> {
