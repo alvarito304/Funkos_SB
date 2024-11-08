@@ -33,7 +33,7 @@ public class FileUploadController {
         try {
             contentType = request.getServletContext().getMimeType(file.getFile().getAbsolutePath());
         } catch (IOException ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se puede determinar el tipo de fichero");
+           // throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se puede determinar el tipo de fichero");
         }
 
         if (contentType == null) {
