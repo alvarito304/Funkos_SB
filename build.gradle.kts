@@ -37,6 +37,8 @@ dependencies {
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
     // Validación
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    // websocket mensajes
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
     // Lombok
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
