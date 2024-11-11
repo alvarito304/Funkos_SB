@@ -31,27 +31,6 @@ public class CategoryFileUploadController {
         this.storageService = storageService;
     }
 
-    @GetMapping(value = "{filename:.+}")
-    @ResponseBody
-    public ResponseEntity<Resource> serveFile(@PathVariable String filename, HttpServletRequest request) {
-        Resource file = storageService.loadAsResource(filename);
-
-        String contentType = null;
-        try {
-            contentType = request.getServletContext().getMimeType(file.getFile().getAbsolutePath());
-        } catch (IOException ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se puede determinar el tipo de fichero");
-        }
-
-        if (contentType == null) {
-            contentType = "application/octet-stream";
-        }
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .body(file);
-    }
-
     @PutMapping( consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public List<CategoryDTO> uploadFile(@RequestPart("file") MultipartFile file) {
 

@@ -39,12 +39,14 @@ public class CategoryStorageServiceImpl implements ICategoryStorageService {
     private final Path rootLocation;
     private final ICategoryService categoryService;
     private final CategoryMapper categoryMapper;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public CategoryStorageServiceImpl(@Value("${upload-jsons.root-location}") String path, ICategoryService categoryService, CategoryMapper categoryMapper) {
+    public CategoryStorageServiceImpl(@Value("${upload-jsons.root-location}") String path, ICategoryService categoryService, CategoryMapper categoryMapper, ObjectMapper objectMapper) {
         this.categoryMapper = categoryMapper;
         this.categoryService = categoryService;
         this.rootLocation = Paths.get(path);
+        this.objectMapper = objectMapper;
     }
 
 
@@ -186,11 +188,10 @@ public class CategoryStorageServiceImpl implements ICategoryStorageService {
 
     @Override
     public List<CategoryDTO> readJson(MultipartFile filename) {
-        ObjectMapper mapper = new ObjectMapper();
 
         try {
             // Convierte el JSON del archivo a una lista de objetos Category
-            var categorias =  mapper.readValue(
+            var categorias =  objectMapper.readValue(
                     filename.getInputStream(),
                     new TypeReference<List<Category>>() {}
             );
@@ -212,7 +213,6 @@ public class CategoryStorageServiceImpl implements ICategoryStorageService {
 
     @Override
     public void createDefaultJson() {
-        ObjectMapper mapper = new ObjectMapper();
         String filename = "default.json";
         Path filePath = rootLocation.resolve(filename);
 
@@ -223,7 +223,7 @@ public class CategoryStorageServiceImpl implements ICategoryStorageService {
 
         try {
             // Serializar las categorías a JSON y guardarlas en el archivo
-            mapper.writeValue(filePath.toFile(), categoriesDTO);
+            objectMapper.writeValue(filePath.toFile(), categoriesDTO);
             log.info("Archivo default.json creado en " + filePath.toString());
         } catch (IOException e) {
             log.error("Error al crear default.json: " + e.getMessage());

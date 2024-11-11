@@ -15,4 +15,13 @@ public class FunkoDTO {
     private float price;
 
     private Category category;
+
+    public FunkoDTO(String name, Category category, float price) {
+        this.name = name;
+        this.category = category;
+        this.price = price;
+    }
+
+    public FunkoDTO() {
+    }
 }

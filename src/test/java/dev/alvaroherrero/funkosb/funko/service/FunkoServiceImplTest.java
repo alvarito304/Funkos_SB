@@ -1,6 +1,8 @@
 package dev.alvaroherrero.funkosb.funko.service;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.alvaroherrero.funkosb.category.model.Category;
 import dev.alvaroherrero.funkosb.funko.exceptions.FunkoNotFoundException;
 import dev.alvaroherrero.funkosb.funko.model.Funko;
@@ -9,19 +11,24 @@ import dev.alvaroherrero.funkosb.funko.repository.IFunkoRepository;
 
 import dev.alvaroherrero.funkosb.funko.storage.service.IStorageService;
 import dev.alvaroherrero.funkosb.global.types.funkocategory.FunkoCategory;
+import dev.alvaroherrero.funkosb.global.websockets.WebSocketConfig;
+import dev.alvaroherrero.funkosb.global.websockets.WebSocketHandler;
+import dev.alvaroherrero.funkosb.notifications.FunkoNotificationMapper;
+import dev.alvaroherrero.funkosb.notifications.Notificacion;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
 
 @ExtendWith(MockitoExtension.class)
 class FunkoServiceImplTest {
@@ -31,6 +38,18 @@ class FunkoServiceImplTest {
 
     @Mock
     private IStorageService storageService;
+
+    @Mock
+    private WebSocketHandler webSocketHandler;
+
+    @Mock
+    private WebSocketConfig webSocketConfig;
+
+    @Mock
+    private ObjectMapper objectMapper;
+
+    @Mock
+    private FunkoNotificationMapper funkoNotificacionMapper;
 
     @InjectMocks
     private FunkoServiceImpl funkoService;
@@ -208,4 +227,39 @@ class FunkoServiceImplTest {
         // verify
         verify(funkoRepository, times(1)).findById(funkoTest.getId());
     }
+
+    @Test
+    void onChange_shouldLogErrorWhenJsonProcessingExceptionOccurs() throws JsonProcessingException {
+
+        when(objectMapper.writeValueAsString(any())).thenThrow(new JsonProcessingException("Error de prueba") {});
+        funkoService.onChange(Notificacion.Tipo.CREATE, funkoTest);
+    }
+
+    @Test
+    void onChange_shouldLogErrorWhenSendMessageFails() throws IOException, InterruptedException {
+        // Configurar mocks necesarios
+        String json = "{}";
+        when(objectMapper.writeValueAsString(any())).thenReturn(json);
+        doThrow(new RuntimeException("Error de prueba")).when(webSocketHandler).sendMessage(json);
+
+        funkoService.onChange(Notificacion.Tipo.CREATE, funkoTest);
+        Thread.sleep(100);
+
+    }
+
+    @Test
+    void onChange_shouldLogWarningWhenWebSocketHandlerIsNull() throws JsonProcessingException {
+        // Configurar el campo webSocketHandler como null usando ReflectionTestUtils
+        ReflectionTestUtils.setField(funkoService, "webSocketHandler", null);
+
+        // Configurar mocks para evitar otras excepciones
+        String json = "{}";
+        when(objectMapper.writeValueAsString(any())).thenReturn(json);
+        when(webSocketConfig.webSocketFunkosHandler()).thenReturn(webSocketHandler);
+
+        // Ejecutar el método onChange
+        funkoService.onChange(Notificacion.Tipo.CREATE, funkoTest);
+        verify(webSocketConfig).webSocketFunkosHandler();
+    }
+
 }
