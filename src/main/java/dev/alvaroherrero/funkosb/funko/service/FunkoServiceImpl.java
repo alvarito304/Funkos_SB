@@ -21,6 +21,8 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -50,9 +52,9 @@ public class FunkoServiceImpl implements  IFunkoService {
     }
 
     @Override
-    public List<Funko> getFunkos() {
+    public Page<Funko> getFunkos(Pageable pageable) {
         logger.info("Obteniendo todos los funkos");
-        List<Funko> funkos = funkoRepository.findAllActiveFunkos();
+        Page<Funko> funkos = funkoRepository.findAllActiveFunkos(pageable);
         return funkos;
     }
 

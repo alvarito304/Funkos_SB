@@ -26,6 +26,8 @@ repositories {
 }
 
 dependencies {
+    // Negociacion de contenido
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
     // local database
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.h2database:h2") // base de datos a usar, puede ser otra

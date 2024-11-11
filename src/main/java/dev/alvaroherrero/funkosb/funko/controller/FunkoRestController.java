@@ -4,9 +4,14 @@ import dev.alvaroherrero.funkosb.funko.dto.FunkoDTO;
 import dev.alvaroherrero.funkosb.funko.mapper.FunkoMapper;
 import dev.alvaroherrero.funkosb.funko.model.Funko;
 import dev.alvaroherrero.funkosb.funko.service.IFunkoService;
+import dev.alvaroherrero.funkosb.global.pageresponse.PageResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,10 +36,19 @@ public class FunkoRestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<FunkoDTO>> getAllFunkos() {
-        var funkos = service.getFunkos();
-        var funkosDTOs = funkos.stream().map(funkoMapper::toDTO).toList();
-        return ResponseEntity.ok(funkosDTOs);
+    public ResponseEntity<PageResponse<FunkoDTO>> getAllFunkos(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+
+        Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        // Creamos cómo va a ser la paginación
+        Pageable pageable = PageRequest.of(page, size, sort);
+        var funkos = service.getFunkos(pageable);
+        Page<FunkoDTO> funkoDTOs = funkos.map(funkoMapper::toDTO);
+        return ResponseEntity.ok(PageResponse.of(funkoDTOs, sortBy, direction));
     }
 
     @GetMapping("/name/{name}")

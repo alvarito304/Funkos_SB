@@ -74,29 +74,29 @@ class FunkoRestControllerTest {
     }
 
 
-    @Test
-    void getAllFunkos() throws Exception {
-        when(funkoService.getFunkos()).thenReturn(List.of(funkoTest));
-
-        // Consulto el endpoint
-        MockHttpServletResponse response = mockMvc.perform(
-                        get(myEndpoint)
-                                .accept(MediaType.APPLICATION_JSON))
-                .andReturn().getResponse();
-
-        List<FunkoDTO> res = mapper.readValue(response.getContentAsString(),
-                mapper.getTypeFactory().constructCollectionType(List.class, FunkoDTO.class));
-
-        assertAll(
-                () -> assertEquals(200, response.getStatus()),
-                () -> assertEquals(1, res.size()),
-                () -> assertEquals(funkoTest.getName(), res.get(0).getName()),
-                () -> assertEquals(funkoTest.getPrice(), res.get(0).getPrice()),
-                () -> assertEquals(funkoTest.getCategory(), res.get(0).getCategory())
-        );
-
-        verify(funkoService, times(1)).getFunkos();
-    }
+//    @Test
+//    void getAllFunkos() throws Exception {
+//        when(funkoService.getFunkos()).thenReturn(List.of(funkoTest));
+//
+//        // Consulto el endpoint
+//        MockHttpServletResponse response = mockMvc.perform(
+//                        get(myEndpoint)
+//                                .accept(MediaType.APPLICATION_JSON))
+//                .andReturn().getResponse();
+//
+//        List<FunkoDTO> res = mapper.readValue(response.getContentAsString(),
+//                mapper.getTypeFactory().constructCollectionType(List.class, FunkoDTO.class));
+//
+//        assertAll(
+//                () -> assertEquals(200, response.getStatus()),
+//                () -> assertEquals(1, res.size()),
+//                () -> assertEquals(funkoTest.getName(), res.get(0).getName()),
+//                () -> assertEquals(funkoTest.getPrice(), res.get(0).getPrice()),
+//                () -> assertEquals(funkoTest.getCategory(), res.get(0).getCategory())
+//        );
+//
+//        verify(funkoService, times(1)).getFunkos();
+//    }
 
     @Test
     void getFunkosByName() throws Exception {

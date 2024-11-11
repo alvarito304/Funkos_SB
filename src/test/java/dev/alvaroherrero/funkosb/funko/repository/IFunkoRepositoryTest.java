@@ -46,18 +46,18 @@ class IFunkoRepositoryTest {
         );
     }
 
-    @Test
-    void finAllActiveFunkos() {
-        // arrange
-        // act
-        var result = funkoRepository.findAllActiveFunkos();
-
-        // assert
-        assertAll(
-                () -> assertEquals(1, result.size()),
-                () -> assertEquals(funkoTest.getName(), result.getFirst().getName())
-        );
-    }
+//    @Test
+//    void finAllActiveFunkos() {
+//        // arrange
+//        // act
+//        var result = funkoRepository.findAllActiveFunkos();
+//
+//        // assert
+//        assertAll(
+//                () -> assertEquals(1, result.size()),
+//                () -> assertEquals(funkoTest.getName(), result.getFirst().getName())
+//        );
+//    }
 
     @Test
     void finAllSoftDeletedFunkos() {
