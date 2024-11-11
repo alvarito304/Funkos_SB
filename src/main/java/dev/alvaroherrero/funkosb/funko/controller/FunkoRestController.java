@@ -5,6 +5,8 @@ import dev.alvaroherrero.funkosb.funko.mapper.FunkoMapper;
 import dev.alvaroherrero.funkosb.funko.model.Funko;
 import dev.alvaroherrero.funkosb.funko.service.IFunkoService;
 import dev.alvaroherrero.funkosb.global.pageresponse.PageResponse;
+import dev.alvaroherrero.funkosb.global.paginationlinkutils.PaginationLinksUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -28,9 +31,11 @@ public class FunkoRestController {
 
     private IFunkoService service;
     private FunkoMapper funkoMapper;
+    private PaginationLinksUtils paginationLinksUtils;
 
     @Autowired
-    public FunkoRestController(IFunkoService funkoService, FunkoMapper funkoMapper) {
+    public FunkoRestController(IFunkoService funkoService, FunkoMapper funkoMapper, PaginationLinksUtils paginationLinksUtils) {
+        this.paginationLinksUtils = paginationLinksUtils;
         this.funkoMapper = funkoMapper;
         this.service = funkoService;
     }
@@ -40,7 +45,8 @@ public class FunkoRestController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction
+            @RequestParam(defaultValue = "asc") String direction,
+            HttpServletRequest request
     ) {
 
         Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
@@ -48,7 +54,12 @@ public class FunkoRestController {
         Pageable pageable = PageRequest.of(page, size, sort);
         var funkos = service.getFunkos(pageable);
         Page<FunkoDTO> funkoDTOs = funkos.map(funkoMapper::toDTO);
-        return ResponseEntity.ok(PageResponse.of(funkoDTOs, sortBy, direction));
+
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString());
+
+        return ResponseEntity.ok()
+                .header("link", paginationLinksUtils.createLinkHeader(funkoDTOs, uriBuilder))
+                .body(PageResponse.of(funkoDTOs, sortBy, direction));
     }
 
     @GetMapping("/name/{name}")
