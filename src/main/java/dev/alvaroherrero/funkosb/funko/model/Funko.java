@@ -1,6 +1,8 @@
 package dev.alvaroherrero.funkosb.funko.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import dev.alvaroherrero.funkosb.category.model.Category;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -24,7 +26,7 @@ import java.time.LocalDateTime;
 public class Funko {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private long id;
+    public long id;
 
     @Column(nullable = false)
     @NotEmpty

@@ -6,6 +6,7 @@ import dev.alvaroherrero.funkosb.funko.model.Funko;
 import dev.alvaroherrero.funkosb.funko.service.IFunkoService;
 import dev.alvaroherrero.funkosb.global.pageresponse.PageResponse;
 import dev.alvaroherrero.funkosb.global.paginationlinkutils.PaginationLinksUtils;
+import dev.alvaroherrero.funkosb.global.types.funkocategory.FunkoCategory;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/funkos")
@@ -40,8 +42,12 @@ public class FunkoRestController {
         this.service = funkoService;
     }
 
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<PageResponse<FunkoDTO>> getAllFunkos(
+            @RequestParam(required = false) Optional<String> name,
+            @RequestParam(required = false) Optional<FunkoCategory> category,
+            @RequestParam(required = false) Optional<Boolean> funkoSoftDeleted,
+            @RequestParam(required = false) Optional<Double> price,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
@@ -49,10 +55,12 @@ public class FunkoRestController {
             HttpServletRequest request
     ) {
 
+        log.info("Obteniendo funkos con las siguientes condiciones: " + category + " " + name + " " + price + " " + funkoSoftDeleted );
+
         Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         // Creamos cómo va a ser la paginación
         Pageable pageable = PageRequest.of(page, size, sort);
-        var funkos = service.getFunkos(pageable);
+        var funkos = service.getFunkos(name, category, funkoSoftDeleted, price, pageable);
         Page<FunkoDTO> funkoDTOs = funkos.map(funkoMapper::toDTO);
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString());

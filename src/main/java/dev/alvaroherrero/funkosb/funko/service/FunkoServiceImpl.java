@@ -2,17 +2,20 @@ package dev.alvaroherrero.funkosb.funko.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.alvaroherrero.funkosb.category.model.Category;
 import dev.alvaroherrero.funkosb.funko.dto.FunkoDTO;
 import dev.alvaroherrero.funkosb.funko.exceptions.FunkoNotFoundException;
 import dev.alvaroherrero.funkosb.funko.mapper.FunkoMapper;
 import dev.alvaroherrero.funkosb.funko.model.Funko;
 import dev.alvaroherrero.funkosb.funko.repository.IFunkoRepository;
 import dev.alvaroherrero.funkosb.funko.storage.service.IStorageService;
+import dev.alvaroherrero.funkosb.global.types.funkocategory.FunkoCategory;
 import dev.alvaroherrero.funkosb.global.websockets.WebSocketConfig;
 import dev.alvaroherrero.funkosb.global.websockets.WebSocketHandler;
 import dev.alvaroherrero.funkosb.notifications.FunkoNotificationDTO;
 import dev.alvaroherrero.funkosb.notifications.FunkoNotificationMapper;
 import dev.alvaroherrero.funkosb.notifications.Notificacion;
+import jakarta.persistence.criteria.Join;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +26,14 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
 @Service
 @Slf4j
 @CacheConfig(cacheNames = {"Funko"})
@@ -35,6 +41,7 @@ public class FunkoServiceImpl implements  IFunkoService {
     private final Logger logger = LoggerFactory.getLogger(FunkoServiceImpl.class);
     private final IFunkoRepository funkoRepository;
     private final IStorageService storageService;
+    private final FunkoMapper funkoMapper;
 
     private WebSocketHandler webSocketHandler;
     private final WebSocketConfig webSocketConfig;
@@ -42,19 +49,44 @@ public class FunkoServiceImpl implements  IFunkoService {
     private final FunkoNotificationMapper funkoNotificacionMapper;
 
     @Autowired
-    public FunkoServiceImpl(IFunkoRepository funkoRepository, IStorageService storageService, WebSocketHandler webSocketHandler, WebSocketConfig webSocketConfig, ObjectMapper objectMapper, FunkoNotificationMapper funkoNotificacionMapper) {
+    public FunkoServiceImpl(IFunkoRepository funkoRepository, IStorageService storageService, WebSocketHandler webSocketHandler, WebSocketConfig webSocketConfig, ObjectMapper objectMapper, FunkoNotificationMapper funkoNotificacionMapper, FunkoMapper funkoMapper) {
         this.webSocketHandler = webSocketHandler;
         this.webSocketConfig = webSocketConfig;
         this.objectMapper = objectMapper;
         this.funkoNotificacionMapper = funkoNotificacionMapper;
         this.funkoRepository = funkoRepository;
         this.storageService = storageService;
+        this.funkoMapper = funkoMapper;
     }
 
     @Override
-    public Page<Funko> getFunkos(Pageable pageable) {
+    public Page<Funko> getFunkos(Optional<String> name, Optional<FunkoCategory> category, Optional<Boolean> softDeleted, Optional<Double> price, Pageable pageable) {
         logger.info("Obteniendo todos los funkos");
-        Page<Funko> funkos = funkoRepository.findAllActiveFunkos(pageable);
+        Specification<Funko> specNameFunko = (root, query, criteriaBuilder) ->
+                name.map(n -> criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + n.toLowerCase() + "%"))
+                        .orElseGet(criteriaBuilder::conjunction);
+
+        Specification<Funko> specCategoryFunko = (root, query, criteriaBuilder) ->
+                category.map(c -> {
+                    Join<Funko, Category> categoriaJoin = root.join("category");
+                    return criteriaBuilder.like(criteriaBuilder.lower(categoriaJoin.get("name")), "%" + c.name().toLowerCase() + "%");
+                }).orElseGet(criteriaBuilder::conjunction);
+
+        Specification<Funko> specSoftDeletedFunko = (root, query, criteriaBuilder) ->
+                softDeleted.map(sd -> criteriaBuilder.equal(root.get("funkoSoftDeleted"), sd))
+                        .orElse(criteriaBuilder.isFalse(root.get("funkoSoftDeleted")));
+
+
+        Specification<Funko> specPriceFunko = (root, query, criteriaBuilder) ->
+                price.map(p -> criteriaBuilder.greaterThanOrEqualTo(root.get("price"), p))
+                        .orElseGet(criteriaBuilder::conjunction);
+
+        Specification<Funko> criterio = Specification.where(specNameFunko)
+                .and(specCategoryFunko)
+                .and(specSoftDeletedFunko)
+                .and(specPriceFunko);
+
+        Page<Funko> funkos = funkoRepository.findAll(criterio, pageable);
         return funkos;
     }
 
@@ -99,7 +131,8 @@ public class FunkoServiceImpl implements  IFunkoService {
         if (funko.getCategory() == null) funko.setCategory(res.getCategory());
         funko.setUpdated_at(LocalDateTime.now());
         onChange(Notificacion.Tipo.UPDATE, funko);
-        return funkoRepository.save(funko);
+        var funkoDTO = funkoRepository.save(funko);
+        return funkoDTO;
     }
 
     @Override

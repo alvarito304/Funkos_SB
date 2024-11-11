@@ -47,7 +47,6 @@ public class CategoryRestController {
         return ResponseEntity.ok(updatedCategory);
     }
 
-    @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<Category> deleteCategory( @PathVariable UUID id) {
         categoryService.softDeleteCategory(id);

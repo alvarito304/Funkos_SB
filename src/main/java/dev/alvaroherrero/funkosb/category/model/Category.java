@@ -42,4 +42,15 @@ public class Category {
     private List<Funko> funkos;
 
     private Boolean softDelete = false;
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "id=" + id +
+                ", category=" + category +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", softDelete=" + softDelete +
+                '}';
+    }
 }
