@@ -26,6 +26,8 @@ repositories {
 }
 
 dependencies {
+    //mongodb
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     // Negociacion de contenido
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
     // local database
@@ -44,9 +46,13 @@ dependencies {
     // Lombok
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.1")
+
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
 }
 
 tasks.test {

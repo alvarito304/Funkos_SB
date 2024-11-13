@@ -45,6 +45,9 @@ public class Funko {
 
    private String image;
 
+    @Builder.Default
+    private Integer stock = 0;
+
     @CreatedDate
     private LocalDateTime created_at = LocalDateTime.now();
     @LastModifiedDate

@@ -26,6 +26,11 @@ public class CaffeineCacheConf {
                 .maximumSize(200)
                 .build());
 
+        cacheManager.registerCustomCache("Pedidos", Caffeine.newBuilder()
+                .expireAfterWrite(5, TimeUnit.MINUTES)
+                .maximumSize(200)
+                .build());
+
         return cacheManager;
     }
 }

@@ -5,13 +5,11 @@ import dev.alvaroherrero.funkosb.global.types.funkocategory.FunkoCategory;
 import dev.alvaroherrero.funkosb.global.validations.validanotations.ValidCategory;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.UUID;
 
 @Data
-@Builder
 public class FunkoDTO {
 
     @NotBlank(message = "El nombre no puede estar vacio")
@@ -21,8 +19,6 @@ public class FunkoDTO {
 
     private FunkoCategory category;
     private UUID categoryId;
-    @Builder.Default
-    private Integer stock = 1;
 
     public FunkoDTO(String name, FunkoCategory category, float price, UUID categoryId) {
         this.name = name;
