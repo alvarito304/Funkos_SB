@@ -129,6 +129,8 @@ public class FunkoServiceImpl implements  IFunkoService {
         if (funko.getName() == null) funko.setName(res.getName());
         if (funko.getPrice() == 0) funko.setPrice(res.getPrice());
         if (funko.getCategory() == null) funko.setCategory(res.getCategory());
+        if (funko.getImage() == null) funko.setImage(res.getImage());
+        if (funko.getStock() == null) funko.setStock(res.getStock());
         funko.setUpdated_at(LocalDateTime.now());
         onChange(Notificacion.Tipo.UPDATE, funko);
         var funkoDTO = funkoRepository.save(funko);

@@ -21,12 +21,14 @@ public class FunkoMapper {
         dto.setPrice(funko.getPrice());
         dto.setCategory(funko.getCategory().getCategory());
         dto.setCategoryId(funko.getCategory().getId());
+        dto.setImagen(funko.getImage());
+        dto.setStock(funko.getStock());
         return dto;
     }
 
     public Funko toEntity(FunkoDTO dto) {
         Category category = categoryRepository.findById(dto.getCategoryId())
                 .orElseThrow(() -> new CategoryNotFoundException(dto.getCategoryId()));
-        return new Funko( dto.getName(), dto.getPrice(), category);
+        return new Funko( dto.getName(), dto.getPrice(), category, dto.getImagen(), dto.getStock());
     }
 }

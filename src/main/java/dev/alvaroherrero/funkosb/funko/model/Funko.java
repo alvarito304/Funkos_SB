@@ -46,7 +46,7 @@ public class Funko {
    private String image;
 
     @Builder.Default
-    private Integer stock = 0;
+    private Integer stock = 1;
 
     @CreatedDate
     private LocalDateTime created_at = LocalDateTime.now();
@@ -54,9 +54,11 @@ public class Funko {
     private LocalDateTime updated_at = LocalDateTime.now();
 
 
-    public Funko(String name, float price, Category category ) {
+    public Funko(String name, float price, Category category, String image, Integer stock) {
         this.category = category;
         this.price = price;
         this.name = name;
+        this.image = image;
+        this.stock = stock;
     }
 }

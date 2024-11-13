@@ -77,12 +77,21 @@ public class CategoryServiceImpl implements ICategoryService {
         var res = categoryRepository.findById(id).orElseThrow(
                 () -> new CategoryNotFoundException(id)
         );
-        category.setId(res.getId());
-        if (category.getCategory() == null) category.setCategory(res.getCategory());
-        category.setCreatedAt(res.getCreatedAt());
-        category.setUpdatedAt(LocalDateTime.now());
-        return categoryRepository.save(category);
+        res.setCategory(category.getCategory());
+        res.setCreatedAt(category.getCreatedAt());
+        res.setUpdatedAt(LocalDateTime.now());
+
+        // Asegúrate de actualizar la colección de manera correcta
+        if (res.getFunkos() != null) {
+            res.getFunkos().clear();
+            if (category.getFunkos() != null) {
+                res.getFunkos().addAll(category.getFunkos());
+            }
+        }
+
+        return categoryRepository.save(res);
     }
+
 
     @Override
     @CacheEvict(key = "#id")

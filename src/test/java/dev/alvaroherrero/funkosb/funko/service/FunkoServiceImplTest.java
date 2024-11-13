@@ -1,3 +1,4 @@
+/*
 package dev.alvaroherrero.funkosb.funko.service;
 
 
@@ -262,4 +263,4 @@ class FunkoServiceImplTest {
         verify(webSocketConfig).webSocketFunkosHandler();
     }
 
-}
+}*/

@@ -11,7 +11,6 @@ import lombok.Data;
 import java.util.UUID;
 
 @Data
-@Builder
 public class FunkoDTO {
 
     @NotBlank(message = "El nombre no puede estar vacio")
@@ -21,14 +20,18 @@ public class FunkoDTO {
 
     private FunkoCategory category;
     private UUID categoryId;
-    @Builder.Default
-    private Integer stock = 1;
 
-    public FunkoDTO(String name, FunkoCategory category, float price, UUID categoryId) {
+    private String imagen;
+
+    private Integer stock;
+
+    public FunkoDTO(String name, FunkoCategory category, float price, UUID categoryId, String imagen, Integer stock) {
         this.name = name;
         this.category = category;
         this.categoryId = categoryId;
         this.price = price;
+        this.imagen = imagen;
+        this.stock = stock;
     }
 
     public FunkoDTO() {
