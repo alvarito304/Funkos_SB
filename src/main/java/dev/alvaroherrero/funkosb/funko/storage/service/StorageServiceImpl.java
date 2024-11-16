@@ -122,7 +122,7 @@ public class StorageServiceImpl implements IStorageService {
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             } else {
-                throw new StorageFileNotFoundException("No se puede leer ficheroooo: " + filename);
+                throw new StorageFileNotFoundException("La imagen no existe: " + filename);
             }
         } catch (MalformedURLException e) {
             throw new StorageException("Error al cargar fichero " + filename + " " + e);

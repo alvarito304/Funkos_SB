@@ -26,25 +26,23 @@ public class Pedido {
     @Id
     @Builder.Default
     private ObjectId id = new ObjectId();
+
     @NotNull(message = "El id del usuario no puede ser nulo")
     private Long idUsuario;
+
     @NotNull(message = "El id del cliente no puede ser nulo")
     private Cliente cliente;
+
     @NotNull(message = "El pedido debe tener al menos una línea de pedido")
     private List<LineaPedido> lineasPedido;
-    // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
-    @Builder.Default()
-    private Integer totalItems = 0;
-    // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
-    @Builder.Default()
-    private Double total = 0.0;
-    // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
+
+    // Campos calculados
     @Builder.Default()
     private LocalDateTime createdAt = LocalDateTime.now();
+
     @Builder.Default()
-    // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
     private LocalDateTime updatedAt = LocalDateTime.now();
-    // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
+
     @Builder.Default()
     private Boolean isDeleted = false;
 
@@ -53,10 +51,21 @@ public class Pedido {
         return id.toHexString();
     }
 
-    // Podemos añadir los set para que calculen los campos calculados, por ejemplo con las líneas de pedido
+    // Método para calcular totalItems y total dinámicamente
     public void setLineasPedido(List<LineaPedido> lineasPedido) {
         this.lineasPedido = lineasPedido;
-        this.totalItems = lineasPedido != null ? lineasPedido.size() : 0;
-        this.total = lineasPedido != null ? lineasPedido.stream().mapToDouble(LineaPedido::getTotal).sum() : 0.0;
+        // Calcula el total de items
+        if (lineasPedido != null) {
+            this.totalItems = lineasPedido.size();
+            // Calcula el total del precio sumando los totales de cada línea
+            this.total = lineasPedido.stream().mapToDouble(LineaPedido::getTotal).sum();
+        } else {
+            this.totalItems = 0;
+            this.total = 0.0;
+        }
     }
+
+    // Campos calculados
+    private Integer totalItems;
+    private Double total;
 }
