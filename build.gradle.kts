@@ -26,6 +26,10 @@ repositories {
 }
 
 dependencies {
+    // jwt
+    implementation("com.auth0:java-jwt:4.4.0")
+    // Spring security
+    implementation("org.springframework.boot:spring-boot-starter-security")
     //mongodb
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.18.0")
@@ -53,6 +57,9 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
+    // Dependencia para test
+    testImplementation("org.springframework.security:spring-security-test")
 
 }
 
