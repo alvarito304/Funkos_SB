@@ -96,7 +96,7 @@ public class PedidoServiceImpl implements IPedidoService {
                 throw new ProductoNotStock(lineaPedido.getIdProducto());
             }
             // Podemos comprobar más cosas, como si el precio es el mismo, etc...
-            if (funko.getPrice() != lineaPedido.getPrecioProducto()) {
+            if (Math.abs(funko.getPrice() - lineaPedido.getPrecioProducto()) > 0.0001) {
                 throw new ProductoBadPrice(lineaPedido.getIdProducto());
             }
         });

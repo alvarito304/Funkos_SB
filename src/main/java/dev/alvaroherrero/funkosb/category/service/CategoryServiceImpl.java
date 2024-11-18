@@ -14,6 +14,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 @Service
@@ -81,16 +82,20 @@ public class CategoryServiceImpl implements ICategoryService {
         res.setCreatedAt(category.getCreatedAt());
         res.setUpdatedAt(LocalDateTime.now());
 
-        // Asegúrate de actualizar la colección de manera correcta
+        // Reemplaza la colección inmutable por una mutable antes de modificar
         if (res.getFunkos() != null) {
+            res.setFunkos(new ArrayList<>(res.getFunkos())); // Crear una copia mutable
             res.getFunkos().clear();
             if (category.getFunkos() != null) {
                 res.getFunkos().addAll(category.getFunkos());
             }
+        } else if (category.getFunkos() != null) {
+            res.setFunkos(new ArrayList<>(category.getFunkos()));
         }
 
         return categoryRepository.save(res);
     }
+
 
 
     @Override

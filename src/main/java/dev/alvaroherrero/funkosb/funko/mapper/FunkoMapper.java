@@ -5,13 +5,14 @@ import dev.alvaroherrero.funkosb.category.model.Category;
 import dev.alvaroherrero.funkosb.category.repository.ICategoryRepository;
 import dev.alvaroherrero.funkosb.funko.dto.FunkoDTO;
 import dev.alvaroherrero.funkosb.funko.model.Funko;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class FunkoMapper {
 
     private final ICategoryRepository categoryRepository;
-
+    @Autowired
     public FunkoMapper(ICategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }

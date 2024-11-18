@@ -23,9 +23,17 @@ class ICategoryRepositoryTest {
 
     @BeforeEach
     void setUp() {
+        // Limpiar la base de datos ficticia antes de cada prueba
+        testEntityManager.getEntityManager().createQuery("DELETE FROM Funko ").executeUpdate();
+
+        testEntityManager.getEntityManager().createQuery("DELETE FROM Category").executeUpdate();
+
+        testEntityManager.flush();
+
+        // Insertar datos de prueba
         categoryTest = new Category();
         categoryTest.setCategory(FunkoCategory.SERIE);
-        testEntityManager.persist(categoryTest);
+        testEntityManager.persistAndFlush(categoryTest);
     }
 
     @Test

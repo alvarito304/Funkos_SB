@@ -120,7 +120,7 @@ public class FunkoRestController {
             return ResponseEntity.ok(funkoMapper.toDTO(service.updateImage(id, file)));
 
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se ha enviado una imagen para el producto o esta está vacía");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se ha enviado una imagen para el producto o esta esta vacia");
         }
     }
 }

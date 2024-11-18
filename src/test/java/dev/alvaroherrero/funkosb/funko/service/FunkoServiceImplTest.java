@@ -1,4 +1,3 @@
-/*
 package dev.alvaroherrero.funkosb.funko.service;
 
 
@@ -22,14 +21,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.util.ReflectionTestUtils;
 
+
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+
 
 @ExtendWith(MockitoExtension.class)
 class FunkoServiceImplTest {
@@ -71,20 +75,26 @@ class FunkoServiceImplTest {
     }
 
     @Test
-    void getFunkos() {
-        //comportamiento del mock
-        when(funkoRepository.findAllActiveFunkos()).thenReturn(List.of(funkoTest));
-        // act
-        var result = funkoService.getFunkos();
-        // assert
+    void findAll_ShouldReturnAllFunkos_WhenNoParametersProvided() {
+        // Arrange
+        List<Funko> expectedProducts = Arrays.asList(funkoTest);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id").ascending()); // ejemplo de creación de un objeto Pageable
+        Page<Funko> expectedPage = new PageImpl<>(expectedProducts);
 
-        assertAll(
-                () -> assertEquals(1, result.size()),
-                () -> assertEquals(funkoTest.getName(), result.getFirst().getName())
+        when(funkoRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(expectedPage);
+
+        // Act
+        Page<Funko> actualPage = funkoService.getFunkos(Optional.empty(), Optional.empty(), Optional.empty(),  Optional.empty(), pageable);
+
+        // Assert
+        assertAll("findAll",
+                () -> assertNotNull(actualPage),
+                () -> assertFalse(actualPage.isEmpty()),
+                () -> assertEquals(expectedPage, actualPage)
         );
 
-        //verify
-        verify(funkoRepository, times(1)).findAllActiveFunkos();
+        // Verify
+        verify(funkoRepository, times(1)).findAll(any(Specification.class), any(Pageable.class));
     }
 
     @Test
@@ -263,4 +273,4 @@ class FunkoServiceImplTest {
         verify(webSocketConfig).webSocketFunkosHandler();
     }
 
-}*/
+}

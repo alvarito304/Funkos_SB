@@ -23,6 +23,12 @@ class IFunkoRepositoryTest {
     private Category categoryTest;
     @BeforeEach
     void setUp() {
+        testEntityManager.getEntityManager().createQuery("DELETE FROM Funko ").executeUpdate();
+
+        testEntityManager.getEntityManager().createQuery("DELETE FROM Category").executeUpdate();
+
+        testEntityManager.flush();
+
         categoryTest = new Category();
         categoryTest.setCategory(FunkoCategory.SERIE);
         testEntityManager.persist(categoryTest);
