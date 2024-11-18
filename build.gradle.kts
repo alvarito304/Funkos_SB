@@ -28,6 +28,7 @@ repositories {
 dependencies {
     //mongodb
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+    implementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.18.0")
     // Negociacion de contenido
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
     // local database
